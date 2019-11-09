@@ -124,3 +124,17 @@ kits.rmRepeat = function(arr) {
 }
 
 
+/* "abcoefoxyozzopp" 查找字符串中所有o出现的位置 */
+//查找字符(character)，在字符串中出现的位置
+kits.searchStr = function(str, character) {
+    // 新建数组，存储 被查找字符出现位置
+    var c = [];
+    for(var i=0; i<str.length; i++) {
+        if(str[i] === character) {
+            c.push(i);
+        }
+    }
+    return c;
+}
+
+

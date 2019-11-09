@@ -59,3 +59,22 @@ kits.getMax = function() {
 }
 
 
+/* 计算两个时间的时间差，返回 相差的 天/时/分/秒 */
+kits.getDateInterval = function(start, end) {
+    var day, hour, minute, second, interval;
+    interval = (end - start) ; //时间差
+    interval = interval / 1000; //毫秒转为秒数
+    second = Math.round(interval % 60); //秒
+    minute = Math.round( interval / 60 % 60 ); //分
+    hour = Math.round(interval / 60 /60 % 24); //时
+    day = Math.round(interval / 60 / 60 / 24 ); //日期
+
+    return {
+        day: day,
+        hour: hour,
+        minute: minute,
+        second: second
+    }
+}
+
+

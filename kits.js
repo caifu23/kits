@@ -78,3 +78,49 @@ kits.getDateInterval = function(start, end) {
 }
 
 
+
+// 数组去重
+// 数组去重
+/* 编写一个方法去掉一个数组的重复元素 */
+// 法一：双重遍历（耗时n*(n-1)）
+kits.removeRepeat = function(arr) {
+    for(var i=0; i<arr.length; i++) {
+        for(var j=i+1; j<arr.length; j++) {
+            if(arr[i] === arr[j]) {
+                arr.splice(j,1);
+            }
+        }
+    }
+    return arr;
+}
+// console.log(kits.removeRepeat([2,4,11,11,0,3,2,12,90]));
+
+//法二：将数组元素，和重复个数 ---- 键值对 存储在对象 
+// 耗时： 小于2n
+kits.rmRepeat = function(arr) {
+    var obj = {};
+    // 遍历数组元素，和重复数 以键值对存储
+    for(var i=0; i<arr.length; i++) {
+        if(obj[arr[i]]) {
+            // 属性值在加一
+            obj[arr[i]] ++;
+        }else {
+            // 原先属性无，则添加属性并赋值 1
+            obj[arr[i]] = 1;
+        }
+    }
+    // console.log(obj);
+
+    // 新建新数组
+    var newArr = [];
+    // 遍历对象 的 属性，并加入数组
+    for(var k in obj) {
+        newArr.push(k);
+    }
+
+    // 返回新数组
+    return newArr;
+    
+}
+
+

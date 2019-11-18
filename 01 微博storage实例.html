@@ -1,0 +1,250 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>微博发布效果</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .weibo {
+            width: 600px;
+            border: 1px solid #ccc;
+
+            margin: 100px auto;
+            padding: 10px;
+
+        }
+
+        .weibo-text {
+            width: 590px;
+            height: 140px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            outline: none;
+            resize: none;
+        }
+
+        .weibo-text:focus {
+            border-color: #f60;
+        }
+
+        .weibo-btn {
+            width: 80px;
+            height: 30px;
+            background-color: #f90;
+            color: #fff;
+            border: 0 none;
+            margin-top: 5px;
+            border-radius: 3px;
+            cursor: pointer;
+            outline: 0 none;
+        }
+
+        .weibo-list {
+            padding-top: 10px;
+        }
+
+        .weibo-list li {
+            font-size: 14px;
+            line-height: 30px;
+            border-bottom: 1px dotted #ccc;
+            overflow: hidden;
+        }
+
+        .weibo-list li p {
+            float: left;
+        }
+
+        .weibo-list li span {
+            float: right;
+            cursor: pointer;
+        }
+
+        .weibo-list li input {
+            height: 24px;
+            line-height: 24px;
+            width: 300px;
+            font-size: 14px;
+            border: 0 none;
+        }
+    </style>
+    <script src="00 封装.js"></script>
+</head>
+
+<body>
+<div class="weibo">
+    <textarea class="weibo-text"></textarea>
+    <input class="weibo-btn" value="发布" type="button">
+    <ul class="weibo-list">
+        
+    </ul>
+</div>
+</body>
+<script>
+    //          获取arr可以封装调用
+    //          获取最大id同样
+    //          创建和加载，都需要ul添加li，也封装
+    //          
+    // 1、按钮、文本域、ul
+    var btn = document.querySelector('.weibo-btn');
+    var text = document.querySelector('.weibo-text');
+    var ul = document.querySelector('.weibo-list');
+    // 获取删除span
+    var del = document.querySelectorAll('.weibo-list span');
+
+    var storageData = new StorageChange();
+    console.log(storageData.a);
+    
+    // // 从 localStorage 里获取数据
+    // let data = localStorage.getItem('wbData');
+    // //----------------------待删除
+    // if(data === null) {
+    //     console.log('此时没有数据存储');
+    // }
+    // // data 为null时，也就是页面一开始没有存储数据时，数组应为[]
+    // let arr = JSON.parse(data) || [];
+    // // 存储的每条数据的标识符
+    // let id = 0;
+
+    // // 获取最大标识符
+    // // getMaxId();
+    // // console.log('最大id： ' + id)
+    // function getMaxId() {
+    //     //arg 是id
+    //     let data = localStorage.getItem('wbData');
+    //     let arr = JSON.parse(data) || [];
+    //     let id = 0;
+    //     arr.forEach(function(e) {
+    //         if(e.id > id) {
+    //             id = e.id;
+    //         }
+    //     });
+    //     return id;
+    // }
+    
+    //加载
+    window.addEventListener('load', refresh);
+    function refresh() {
+        // 判断是否新本地历史有，如果有则遍历， 否则按原文档输出
+        let arr = storageData.searchStorageData('wbData');
+        if(arr.length) {
+            // console.log('你要遍历localStorage的数据了');
+            arr.forEach(function(val) {
+                // 获取原本ul中的第一个
+                var oldFirst = ul.children[0];
+                // 创建新li
+                var li  = document.createElement('li');
+                li.innerHTML = '<p>'+ val.content +'</p><span data-id = '+ val.id +' >删除</span>';
+                // 加入到ul中
+                ul.insertBefore(li, oldFirst );
+            });
+        }
+        
+    }
+
+
+    // 发布 点击监听
+    btn.addEventListener('click', createNode);     
+    // 创建节点
+    function createNode() {
+            // 获取原本ul中的第一个
+            var oldFirst = ul.children[0];
+            // 获取文本框的文本
+            var content = text.value ;
+            
+            // 判断文本域中的值为空时，提示用户输入内容 
+            if(text.value === '') {
+                alert('请输入内容后再发布！');
+                
+            }else {
+                //    ------------------------------------------------
+                // 获取最大id
+                // let newId = getMaxId();
+        
+                // console.log('最大id： ' + newId)
+                // console.log('未加一前的id： '+newId);
+                // newId++;
+                // console.log('自增后的id： '+newId);
+                // // 存储到obj，并添加到arr中
+                // // 出错-----------------------------------------
+                // let obj = {
+                //     id: newId,
+                //     content: content
+                // };
+                // console.log(obj.id);
+                // console.log(obj);
+                // // console.log(arr);
+                // // 获取当前的arr
+                // data = localStorage.getItem('wbData');
+                // arr = JSON.parse(data) || [];
+                // arr.push(obj);
+                // console.log(arr);
+                // // console.log(JSON.stringify(arr));
+                // localStorage.setItem('wbData', JSON.stringify(arr));
+                let newId = storageData.getMaxId('wbData') + 1;
+                storageData.addData('wbData',content);
+
+
+                // 创建新li
+                var li  = document.createElement('li');
+                li.innerHTML = '<p>'+ content +'</p><span data-id = '+ newId +'>删除</span>';
+                // 加入到ul中
+                ul.insertBefore(li, oldFirst );
+                text.value = '';
+                
+            }
+        }
+
+        // 出错----------------------------
+    // 点击删除             
+    ul.addEventListener('click', removeLi);
+
+    function removeLi(ele) {
+        if(ele.target.nodeName === 'SPAN') {
+            ul.removeChild(ele.target.parentNode);
+            // console.log('你在进行删除操作');
+            // console.log(ele.target.parentNode);
+
+            // 获取即将被删除元素的data-id
+            var eleId = ele.target.dataset.id;
+            // console.log(eleId);
+
+            // data = localStorage.getItem('wbData');
+            // arr = JSON.parse(data) || [];
+
+            // arr = arr.filter(function(e) {
+            //     return e.id != eleId
+            // });
+
+
+            // // console.log(arr);
+
+            // // 删除li后，将arr覆盖localStorage
+            // let json = JSON.stringify(arr);
+            // localStorage.setItem('wbData', json);
+            storageData.delData('wbData', eleId);
+        }
+    }
+
+
+    
+    // 键盘事件
+    text.addEventListener('keydown', combineKey);
+    function combineKey(e) {
+        // 判断用户在文本域内，按下回车
+        if(e.which === 13 && e.ctrlKey === true) {
+            // 按下回车的同时，还按下了ctrl键
+            //调用创建节点
+            createNode();
+        }
+    }
+
+    
+
+</script>
+</html>
